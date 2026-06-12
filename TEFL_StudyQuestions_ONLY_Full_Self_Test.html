@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TEFL Methods - Study Questions Exam</title>
+<style>
+:root {
+  --bg:#eef2f7; --card:#ffffff; --ink:#172033; --muted:#667085;
+  --blue:#2563eb; --green:#16a34a; --red:#dc2626; --amber:#f59e0b;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:linear-gradient(180deg,#eef2f7,#f8fafc);color:var(--ink)}
+header{background:#111827;color:white;padding:24px 16px;text-align:center;position:sticky;top:0;z-index:10;box-shadow:0 2px 10px #0003}
+header h1{margin:0;font-size:24px}
+header p{margin:8px 0 0;color:#d1d5db}
+.wrap{max-width:1050px;margin:0 auto;padding:18px}
+.panel{background:var(--card);border-radius:16px;padding:18px;margin:16px 0;box-shadow:0 4px 18px #00000012}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.stat{background:#f1f5f9;border-radius:12px;padding:12px;text-align:center}
+.stat b{display:block;font-size:22px}
+.controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+button,select{border:0;border-radius:10px;padding:11px 14px;font-weight:700;font-size:14px}
+button{background:var(--blue);color:white;cursor:pointer}
+button.secondary{background:#475569}
+button.warn{background:var(--amber);color:#111827}
+button.danger{background:var(--red)}
+select{background:#e2e8f0;color:#111827}
+.qcard{background:white;border-radius:16px;padding:18px;margin:14px 0;box-shadow:0 3px 14px #00000012;border:2px solid transparent}
+.qtop{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.badge{font-size:12px;background:#dbeafe;color:#1e40af;border-radius:999px;padding:5px 9px;font-weight:700;white-space:nowrap}
+.qtext{font-size:18px;font-weight:700;line-height:1.5;margin:10px 0 14px}
+.option{display:block;padding:12px;margin:8px 0;border:1px solid #d0d5dd;border-radius:12px;background:#f8fafc;cursor:pointer}
+.option:hover{background:#eef6ff}
+.option input{margin-right:8px}
+.correct{border-color:var(--green)!important;background:#dcfce7!important}
+.wrong{border-color:var(--red)!important;background:#fee2e2!important}
+.explain{display:none;margin-top:10px;font-size:14px;color:#334155}
+.qcard.answered .explain{display:block}
+#resultBox{display:none;text-align:center}
+.score{font-size:42px;font-weight:900}
+.pass{color:var(--green)} .fail{color:var(--red)}
+.footer{text-align:center;color:#667085;padding:24px}
+@media(max-width:700px){.stats{grid-template-columns:repeat(2,1fr)} header h1{font-size:20px} .qtext{font-size:16px}}
+</style>
+</head>
+<body>
+<header>
+<h1>TEFL Methods Exam — Study Questions & Answers Only</h1>
+<p>MCQ + True / False | Full self-test file | Opens directly in browser</p>
+</header>
+
+<div class="wrap">
+<div class="panel">
+<div class="stats">
+<div class="stat"><span>Total Questions</span><b id="total">0</b></div>
+<div class="stat"><span>Answered</span><b id="answered">0</b></div>
+<div class="stat"><span>Correct</span><b id="correct">0</b></div>
+<div class="stat"><span>Wrong</span><b id="wrong">0</b></div>
+</div>
+</div>
+
+<div class="panel controls">
+<select id="filter" onchange="render()">
+<option value="All">All Methods</option>
+<option value="GTM">GTM</option>
+<option value="Direct Method">Direct Method</option>
+<option value="ALM">ALM</option>
+<option value="Silent Way">Silent Way</option>
+<option value="Desuggestopedia">Desuggestopedia</option>
+<option value="CLT">CLT</option>
+</select>
+<button onclick="checkAll()">Submit / Show Score</button>
+<button class="secondary" onclick="showAnswers()">Show Answers</button>
+<button class="warn" onclick="shuffleQuestions()">Shuffle</button>
+<button class="danger" onclick="resetQuiz()">Reset</button>
+</div>
+
+<div id="quiz"></div>
+
+<div id="resultBox" class="panel">
+<div class="score" id="finalScore"></div>
+<p id="finalMsg"></p>
+</div>
+
+<div class="footer">Made for quick revision from Study Questions & Answers only.</div>
+</div>
+
+<script>
+let questions = [{"type": "mcq", "method": "GTM", "q": "What is a method in language teaching?", "opts": ["A random set of classroom games", "A coherent link between teacher techniques and underlying principles", "Only grammar rules", "Only student activities"], "a": 1}, {"type": "mcq", "method": "GTM", "q": "In GTM, techniques are:", "opts": ["Hidden beliefs about learning", "Observable classroom actions and activities", "The students' emotions", "Only translation theory"], "a": 1}, {"type": "mcq", "method": "GTM", "q": "In GTM, principles are:", "opts": ["Observable actions only", "Underlying beliefs and theoretical assumptions", "Only vocabulary lists", "Only exam questions"], "a": 1}, {"type": "mcq", "method": "GTM", "q": "The fundamental purpose of learning a language in GTM is to:", "opts": ["Speak fluently", "Read its literature", "Use language in real-life communication", "Develop pronunciation"], "a": 1}, {"type": "mcq", "method": "GTM", "q": "In GTM, literary language is considered:", "opts": ["Inferior to spoken language", "Equal to slang", "Superior to spoken language", "Unimportant"], "a": 2}, {"type": "mcq", "method": "GTM", "q": "Students in GTM usually translate readings from:", "opts": ["Native language to native language", "Target language into native language", "Pictures into actions", "Speech into songs"], "a": 1}, {"type": "mcq", "method": "GTM", "q": "In GTM, communication in the target language is:", "opts": ["The main goal", "Not a goal", "The only goal", "Practiced daily"], "a": 1}, {"type": "mcq", "method": "GTM", "q": "The primary skills in GTM are:", "opts": ["Listening and speaking", "Reading and writing", "Speaking and pronunciation", "Drama and singing"], "a": 1}, {"type": "mcq", "method": "GTM", "q": "Pronunciation in GTM is:", "opts": ["Central", "Almost ignored", "Practiced from the beginning", "Corrected through songs"], "a": 1}, {"type": "mcq", "method": "GTM", "q": "The teacher in GTM is viewed as:", "opts": ["A silent observer", "The classroom authority", "A counselor", "A classmate"], "a": 1}, {"type": "mcq", "method": "GTM", "q": "Grammar in GTM is taught:", "opts": ["Inductively", "Deductively", "Through physical commands", "Through music"], "a": 1}, {"type": "mcq", "method": "GTM", "q": "A deductive approach means:", "opts": ["Students infer rules from examples", "The rule is given first, then applied", "No rules are used", "Students only listen"], "a": 1}, {"type": "mcq", "method": "GTM", "q": "An inductive approach means:", "opts": ["The rule is given first", "Students discover the rule from examples", "Students memorize only lists", "Teacher translates everything"], "a": 1}, {"type": "mcq", "method": "GTM", "q": "In GTM, if a student makes an error, the teacher usually:", "opts": ["Ignores it forever", "Supplies the correct answer directly", "Uses only gestures", "Waits until next week"], "a": 1}, {"type": "mcq", "method": "GTM", "q": "Vocabulary in GTM is usually learned as:", "opts": ["Isolated word lists with native equivalents", "Songs only", "Body movements", "Role-play cards"], "a": 0}, {"type": "mcq", "method": "Direct Method", "q": "In the Direct Method, the native language should be:", "opts": ["Used for all explanation", "Never used in the classroom", "Used for translation exercises", "Used after every sentence"], "a": 1}, {"type": "mcq", "method": "Direct Method", "q": "The Direct Method tries to make students think in:", "opts": ["Their native language", "The target language", "Both languages equally through translation", "Symbols only"], "a": 1}, {"type": "mcq", "method": "Direct Method", "q": "Meaning in DM is conveyed through:", "opts": ["Translation", "Demonstrations, pictures, realia, and pantomime", "Grammar explanation in L1", "Written tests only"], "a": 1}, {"type": "mcq", "method": "Direct Method", "q": "In DM, the teacher mainly:", "opts": ["Demonstrates", "Translates", "Dictates grammar rules in L1", "Avoids interaction"], "a": 0}, {"type": "mcq", "method": "Direct Method", "q": "Grammar in DM is taught:", "opts": ["Deductively", "Inductively", "Only through translation", "Not at all in any form"], "a": 1}, {"type": "mcq", "method": "Direct Method", "q": "The syllabus in DM is based on:", "opts": ["Situations or topics", "Only linguistic structures", "Only literature", "Only exam vocabulary"], "a": 0}, {"type": "mcq", "method": "Direct Method", "q": "In DM, oral communication is:", "opts": ["Primary", "Ignored", "Delayed until university", "Only tested through translation"], "a": 0}, {"type": "mcq", "method": "Direct Method", "q": "Pronunciation in DM is worked on:", "opts": ["From the beginning", "Never", "Only at the end", "Only in the native language"], "a": 0}, {"type": "mcq", "method": "Direct Method", "q": "How does a DM teacher usually respond to errors?", "opts": ["By encouraging self-correction", "By translating the rule", "By punishing students", "By ignoring all errors"], "a": 0}, {"type": "mcq", "method": "Direct Method", "q": "Culture in DM includes:", "opts": ["Only fine arts", "History, geography, and daily lives of target language speakers", "Only grammar", "Only literary translation"], "a": 1}, {"type": "mcq", "method": "ALM", "q": "ALM is firmly grounded in:", "opts": ["Structural linguistics and behavioral psychology", "Only literature", "Only silent discovery", "Only counseling"], "a": 0}, {"type": "mcq", "method": "ALM", "q": "ALM views language learning as:", "opts": ["Habit formation", "Pure creativity with no practice", "Only translation", "Only reading"], "a": 0}, {"type": "mcq", "method": "ALM", "q": "A key difference between DM and ALM is that ALM uses:", "opts": ["Extensive pattern drills", "No oral work", "Native-language grammar lectures", "Only literature"], "a": 0}, {"type": "mcq", "method": "ALM", "q": "Backward build-up drill starts from:", "opts": ["The beginning of a sentence", "The end of a sentence", "The title of the book", "The grammar rule"], "a": 1}, {"type": "mcq", "method": "ALM", "q": "The reason for starting from the end in backward build-up drill is to keep:", "opts": ["Translation accurate", "Intonation natural", "Writing neat", "Vocabulary limited"], "a": 1}, {"type": "mcq", "method": "ALM", "q": "A minimal pair consists of two words that differ in:", "opts": ["Only one sound", "Only one paragraph", "Their grammar category only", "Their culture"], "a": 0}, {"type": "mcq", "method": "ALM", "q": "Which is a minimal pair example?", "opts": ["book/table", "ship/sheep", "teacher/classroom", "grammar/translation"], "a": 1}, {"type": "mcq", "method": "ALM", "q": "In ALM, L1 and L2 should be kept apart because:", "opts": ["L1 habits may interfere with L2 acquisition", "Students should never learn culture", "Vocabulary is useless", "Teachers dislike translation only"], "a": 0}, {"type": "mcq", "method": "ALM", "q": "The principle behind repetition in ALM is:", "opts": ["The more repetition, the stronger the habit", "Students must discover rules silently", "Errors are always ignored", "Music creates retention"], "a": 0}, {"type": "mcq", "method": "ALM", "q": "In ALM, students should overlearn so they can:", "opts": ["Answer automatically without thinking", "Translate poems", "Avoid all speaking", "Write essays only"], "a": 0}, {"type": "mcq", "method": "ALM", "q": "Vocabulary in ALM is limited because the major objective is to acquire:", "opts": ["Structural patterns", "Literary appreciation", "Counseling skills", "Native language grammar"], "a": 0}, {"type": "mcq", "method": "ALM", "q": "ALM sees each language as:", "opts": ["A unique system with levels and patterns", "A list of translated words only", "A set of pictures", "A counseling session"], "a": 0}, {"type": "mcq", "method": "ALM", "q": "Culture in ALM is:", "opts": ["Everyday behavior and lifestyle", "Only classical art", "Not related to language", "Only pronunciation"], "a": 0}, {"type": "mcq", "method": "ALM", "q": "Dialogue memorization in ALM involves:", "opts": ["Memorizing dialogues through mimicry", "Silent chart pointing only", "Free debate only", "Reading literature aloud in L1"], "a": 0}, {"type": "mcq", "method": "ALM", "q": "A transformation drill asks students to:", "opts": ["Change one sentence type into another", "Choose a new identity", "Listen to music", "Translate a poem"], "a": 0}, {"type": "mcq", "method": "ALM", "q": "A chain drill forms:", "opts": ["Conversation around the room", "A wall chart", "A grammar essay", "A written translation"], "a": 0}, {"type": "mcq", "method": "Silent Way", "q": "A major problem with ALM was that students could not easily transfer classroom habits to:", "opts": ["Real communicative use", "Written grammar rules", "Vocabulary lists", "Pronunciation drills"], "a": 0}, {"type": "mcq", "method": "Silent Way", "q": "Chomsky argued language acquisition cannot be only habit formation because people:", "opts": ["Create and understand novel utterances", "Only repeat memorized dialogues", "Cannot learn grammar", "Need translation"], "a": 0}, {"type": "mcq", "method": "Silent Way", "q": "Chomsky emphasized:", "opts": ["Rule formation", "Translation only", "Memorization only", "Teacher authority only"], "a": 0}, {"type": "mcq", "method": "Silent Way", "q": "The Cognitive Code Approach sees learners as:", "opts": ["Active thinkers who formulate hypotheses", "Passive repeaters only", "Translators only", "People who must never make errors"], "a": 0}, {"type": "mcq", "method": "Silent Way", "q": "In the Cognitive Code Approach, errors are:", "opts": ["Signs of active hypothesis testing", "Always signs of failure", "Never allowed", "Punished immediately"], "a": 0}, {"type": "mcq", "method": "Silent Way", "q": "'Teaching is subordinated to learning' means:", "opts": ["Teacher action is secondary to learner engagement", "Teacher talks all the time", "Students only translate", "Learning is less important than teaching"], "a": 0}, {"type": "mcq", "method": "Silent Way", "q": "Only the learner can:", "opts": ["Do the learning", "Translate everything", "Correct the teacher", "Design the textbook"], "a": 0}, {"type": "mcq", "method": "Silent Way", "q": "A key principle of Silent Way is learner:", "opts": ["Autonomy and independence", "Total dependency on teacher", "Fear of errors", "Native language translation"], "a": 0}, {"type": "mcq", "method": "Silent Way", "q": "Silent Way encourages:", "opts": ["Discovery learning", "Mechanical habit only", "Direct translation", "Teacher explanation only"], "a": 0}, {"type": "mcq", "method": "Silent Way", "q": "The Sound-Color Chart represents:", "opts": ["Sounds through colors", "Grammar rules through L1", "Student marks", "Homework answers"], "a": 0}, {"type": "mcq", "method": "Silent Way", "q": "Teacher's silence is used to:", "opts": ["Force students to take responsibility", "Avoid teaching completely", "Punish students", "End the lesson"], "a": 0}, {"type": "mcq", "method": "Silent Way", "q": "Cuisenaire rods are used to:", "opts": ["Provide visible situations for language structures", "Translate literature", "Play background music", "Record conversations"], "a": 0}, {"type": "mcq", "method": "Silent Way", "q": "Fidel Charts help students associate:", "opts": ["Sounds with spellings", "Words with prices", "Music with memory", "Culture with translation"], "a": 0}, {"type": "mcq", "method": "Silent Way", "q": "Structured feedback means students:", "opts": ["Make observations about the lesson", "Take a grammar-only exam", "Repeat drills rapidly", "Translate the dialogue"], "a": 0}, {"type": "mcq", "method": "Desuggestopedia", "q": "'Desuggest' means to:", "opts": ["Eliminate or remove psychological barriers", "Add more grammar rules", "Translate every word", "Speak only after 20 hours"], "a": 0}, {"type": "mcq", "method": "Desuggestopedia", "q": "Desuggestopedia is used because learners often bring:", "opts": ["Negative beliefs and fears about learning", "Perfect confidence only", "No emotions at all", "Only pronunciation problems"], "a": 0}, {"type": "mcq", "method": "Desuggestopedia", "q": "According to Lozanov, learning can be accelerated by:", "opts": ["Relaxation, trust, music, and positive suggestion", "Punishment and memorization only", "No teacher authority", "Avoiding arts completely"], "a": 0}, {"type": "mcq", "method": "Desuggestopedia", "q": "Music in Desuggestopedia creates:", "opts": ["Relaxed concentration", "Grammar translation", "Physical response", "Silent discovery"], "a": 0}, {"type": "mcq", "method": "Desuggestopedia", "q": "A new identity helps students:", "opts": ["Feel secure and reduce inhibitions", "Memorize only grammar", "Avoid speaking forever", "Reject the teacher"], "a": 0}, {"type": "mcq", "method": "Desuggestopedia", "q": "Peripheral learning means students can learn from:", "opts": ["Posters on classroom walls", "Only formal tests", "Teacher silence", "Physical commands"], "a": 0}, {"type": "mcq", "method": "Desuggestopedia", "q": "In Desuggestopedia, the teacher is:", "opts": ["An authority whom students trust", "A silent observer only", "A military drill leader", "A student translator"], "a": 0}, {"type": "mcq", "method": "Desuggestopedia", "q": "Both hemispheres of the brain are activated through:", "opts": ["Music, arts, and language", "Only grammar rules", "Only written translation", "Only physical movement"], "a": 0}, {"type": "mcq", "method": "Desuggestopedia", "q": "First Concert involves:", "opts": ["Teacher reading with voice matching classical music rhythm and pitch", "Students commanding the teacher", "Students translating literature", "Silent chart pointing"], "a": 0}, {"type": "mcq", "method": "Desuggestopedia", "q": "Creative Adaptation involves:", "opts": ["Singing, dancing, dramatizations, games", "Only isolated vocabulary memorization", "Only teacher correction", "Only grammar lectures"], "a": 0}, {"type": "mcq", "method": "CLT", "q": "According to Morrow, true communicative activities share:", "opts": ["Information gap, choice, and feedback", "Translation, grammar, and memorization", "Silence, rods, and charts", "Music, posters, and identity"], "a": 0}, {"type": "mcq", "method": "CLT", "q": "Information gap exists when:", "opts": ["One person knows something the other does not", "Both already know the answer", "Students repeat the same sentence", "Teacher gives the answer"], "a": 0}, {"type": "mcq", "method": "CLT", "q": "Choice in communication means the speaker can choose:", "opts": ["What to say and how to say it", "Only one fixed sentence", "Only the teacher's answer", "Only the grammar rule"], "a": 0}, {"type": "mcq", "method": "CLT", "q": "Feedback means the speaker can evaluate whether:", "opts": ["The communicative purpose was achieved", "The translation was literal", "The rule was memorized", "The drill was repeated"], "a": 0}, {"type": "mcq", "method": "CLT", "q": "In CLT, language is viewed as:", "opts": ["For communication", "Only for reading literature", "Only habit formation", "Only physical response"], "a": 0}, {"type": "mcq", "method": "CLT", "q": "Communicative competence includes knowing:", "opts": ["When and how to say what to whom", "Only grammar forms", "Only spelling", "Only translation equivalents"], "a": 0}, {"type": "mcq", "method": "CLT", "q": "In CLT, meaning arises through:", "opts": ["Negotiation between speaker/listener or reader/writer", "Memorization only", "Teacher authority only", "Native-language translation"], "a": 0}, {"type": "mcq", "method": "CLT", "q": "Culture in CLT is:", "opts": ["Everyday lifestyle, including nonverbal behavior", "Only fine arts", "Irrelevant to communication", "Only grammar usage"], "a": 0}, {"type": "mcq", "method": "CLT", "q": "Authentic materials include:", "opts": ["Newspapers, menus, timetables, weather forecasts", "Only invented grammar drills", "Only rods", "Only classical music"], "a": 0}, {"type": "mcq", "method": "CLT", "q": "Role-play in CLT helps students practice:", "opts": ["Communication in different social contexts and roles", "Translation only", "Silent discovery only", "Mechanical pattern drills only"], "a": 0}, {"type": "tf", "method": "GTM", "q": "In GTM, reading and writing receive more attention than speaking and listening.", "a": true}, {"type": "tf", "method": "GTM", "q": "GTM considers communication in the target language its main goal.", "a": false}, {"type": "tf", "method": "GTM", "q": "In GTM, grammar rules are usually given before practice.", "a": true}, {"type": "tf", "method": "GTM", "q": "In GTM, the teacher usually encourages students to discover grammar rules from examples.", "a": false}, {"type": "tf", "method": "GTM", "q": "GTM vocabulary is often memorized as isolated lists with native language equivalents.", "a": true}, {"type": "tf", "method": "Direct Method", "q": "The Direct Method allows translation whenever meaning is difficult.", "a": false}, {"type": "tf", "method": "Direct Method", "q": "In DM, meaning is made clear through demonstration, pictures, realia, and pantomime.", "a": true}, {"type": "tf", "method": "Direct Method", "q": "DM teaches grammar inductively.", "a": true}, {"type": "tf", "method": "Direct Method", "q": "DM ignores pronunciation at the beginning.", "a": false}, {"type": "tf", "method": "Direct Method", "q": "In DM, students are encouraged to self-correct errors when possible.", "a": true}, {"type": "tf", "method": "ALM", "q": "ALM is connected with behavioral psychology and habit formation.", "a": true}, {"type": "tf", "method": "ALM", "q": "ALM uses dialogue memorization and pattern drills.", "a": true}, {"type": "tf", "method": "ALM", "q": "A minimal pair differs in many sounds.", "a": false}, {"type": "tf", "method": "ALM", "q": "Backward build-up drill starts from the end of the sentence.", "a": true}, {"type": "tf", "method": "ALM", "q": "In ALM, vocabulary is unlimited from the beginning.", "a": false}, {"type": "tf", "method": "ALM", "q": "ALM says L1 and L2 should be kept apart to reduce interference.", "a": true}, {"type": "tf", "method": "Silent Way", "q": "Chomsky argued that language cannot be explained only as habit formation.", "a": true}, {"type": "tf", "method": "Silent Way", "q": "The Cognitive Code Approach views learners as passive repeaters.", "a": false}, {"type": "tf", "method": "Silent Way", "q": "In Silent Way, errors are natural signs of hypothesis testing.", "a": true}, {"type": "tf", "method": "Silent Way", "q": "Teacher silence in Silent Way increases learner responsibility.", "a": true}, {"type": "tf", "method": "Silent Way", "q": "Silent Way depends mainly on translation from L2 to L1.", "a": false}, {"type": "tf", "method": "Desuggestopedia", "q": "Desuggestopedia tries to remove psychological barriers to learning.", "a": true}, {"type": "tf", "method": "Desuggestopedia", "q": "Lozanov believed music and relaxation could help accelerate learning.", "a": true}, {"type": "tf", "method": "Desuggestopedia", "q": "Peripheral learning means students learn only through direct explanation.", "a": false}, {"type": "tf", "method": "Desuggestopedia", "q": "Choosing a new identity may reduce inhibitions.", "a": true}, {"type": "tf", "method": "Desuggestopedia", "q": "Desuggestopedia rejects positive suggestion.", "a": false}, {"type": "tf", "method": "CLT", "q": "CLT focuses on communicative competence, not only linguistic competence.", "a": true}, {"type": "tf", "method": "CLT", "q": "Information gap means both students already know the answer.", "a": false}, {"type": "tf", "method": "CLT", "q": "True communication requires choice.", "a": true}, {"type": "tf", "method": "CLT", "q": "In CLT, feedback helps the speaker know whether the purpose was achieved.", "a": true}, {"type": "tf", "method": "CLT", "q": "Authentic materials expose students to real-world language.", "a": true}, {"type": "tf", "method": "CLT", "q": "In CLT, one form can serve different functions.", "a": true}, {"type": "tf", "method": "CLT", "q": "CLT views culture as irrelevant to communication.", "a": false}];
+let state = {};
+
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+}
+
+function render() {
+  const filter = document.getElementById('filter').value;
+  const list = questions.filter(q => filter === 'All' || q.method === filter);
+  document.getElementById('total').textContent = list.length;
+  const box = document.getElementById('quiz');
+  box.innerHTML = '';
+  list.forEach((q, idx) => {
+    const globalIndex = questions.indexOf(q);
+    const chosen = state[globalIndex];
+    const answered = chosen !== undefined;
+    let html = `<div class="qcard ${answered?'answered':''}" id="card_${globalIndex}">
+      <div class="qtop"><span class="badge">${q.method} • ${q.type.toUpperCase()}</span><span class="badge">Q${idx+1}</span></div>
+      <div class="qtext">${q.q}</div>`;
+    if(q.type === 'mcq') {
+      q.opts.forEach((op, i) => {
+        let cls = '';
+        if(answered) {
+          if(i === q.a) cls = 'correct';
+          else if(i === chosen) cls = 'wrong';
+        }
+        html += `<label class="option ${cls}"><input type="radio" name="q_${globalIndex}" value="${i}" ${chosen===i?'checked':''} onchange="answer(${globalIndex},${i})"> ${op}</label>`;
+      });
+      html += `<div class="explain">Correct answer: <b>${q.opts[q.a]}</b></div>`;
+    } else {
+      [true,false].forEach(val => {
+        let text = val ? 'True' : 'False';
+        let cls = '';
+        if(answered) {
+          if(val === q.a) cls = 'correct';
+          else if(val === chosen) cls = 'wrong';
+        }
+        html += `<label class="option ${cls}"><input type="radio" name="q_${globalIndex}" value="${val}" ${chosen===val?'checked':''} onchange="answer(${globalIndex},${val})"> ${text}</label>`;
+      });
+      html += `<div class="explain">Correct answer: <b>${q.a ? 'True' : 'False'}</b></div>`;
+    }
+    html += `</div>`;
+    box.innerHTML += html;
+  });
+  updateStats();
+}
+
+function answer(i, v) {
+  state[i] = v;
+  render();
+}
+
+function updateStats() {
+  let answered=0, correct=0, wrong=0;
+  for(const k in state) {
+    answered++;
+    const q = questions[k];
+    if(state[k] === q.a) correct++; else wrong++;
+  }
+  document.getElementById('answered').textContent = answered;
+  document.getElementById('correct').textContent = correct;
+  document.getElementById('wrong').textContent = wrong;
+}
+
+function checkAll() {
+  let total = Object.keys(state).length;
+  let correct = 0;
+  for(const k in state) if(state[k] === questions[k].a) correct++;
+  let percent = total ? Math.round(correct/total*100) : 0;
+  document.getElementById('resultBox').style.display = 'block';
+  document.getElementById('finalScore').innerHTML = `<span class="${percent>=60?'pass':'fail'}">${correct} / ${total} (${percent}%)</span>`;
+  document.getElementById('finalMsg').textContent = total === 0 ? 'You have not answered any question yet.' : (percent>=80 ? 'Excellent revision.' : percent>=60 ? 'Acceptable, but review the wrong answers.' : 'Weak result. Repeat the test and focus on missed methods.');
+  window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'});
+}
+
+function showAnswers() {
+  questions.forEach((q,i)=>{ if(state[i]===undefined) state[i]=q.a; });
+  render();
+}
+
+function resetQuiz() {
+  state = {};
+  document.getElementById('resultBox').style.display = 'none';
+  render();
+}
+
+function shuffleQuestions() {
+  shuffle(questions);
+  state = {};
+  document.getElementById('resultBox').style.display = 'none';
+  render();
+}
+
+render();
+</script>
+</body>
+</html>
